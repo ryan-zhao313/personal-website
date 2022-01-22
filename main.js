@@ -30,7 +30,7 @@ camera.position.setZ(30);
 // 3. Create a mesh by combining geometry and material
 const geometry = new THREE.DodecahedronGeometry(12, 1);
 
-const material = new THREE.MeshStandardMaterial( {color: 0x2c4ff9});
+const material = new THREE.MeshNormalMaterial( {color: 0x2c4ff9, wireframe: true});
 const dodecahedron = new THREE.Mesh(geometry, material) ;
 
 scene.add(dodecahedron);
@@ -47,7 +47,7 @@ scene.add(ambientLight, pointLight);
 // shows you where the light source is
 const lightHelper = new THREE.PointLightHelper(pointLight);
 const gridHelper = new THREE.GridHelper(200, 50);
-scene.add(gridHelper, lightHelper);
+// scene.add(gridHelper, lightHelper);
 
 // Instantiate a Orbit Control object to control our camera
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -76,6 +76,15 @@ Array(225).fill().forEach(addStar);
 // );
 // ryan.position.set(-10, -10, -10);
 // scene.add(ryan);
+
+function moveCamera() {
+  const t = document.body.getBoundingClientRect().top;
+  camera.position.x = t * -0.01;
+  camera.position.y = t * -0.0002;
+  camera.position.z = t * -0.0002;
+}
+
+document.body.onscroll = moveCamera;
 
 // "Game Loop" to run constantly
 function animate() {
