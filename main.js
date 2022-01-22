@@ -2,6 +2,8 @@ import './style.css'
 
 import * as THREE from 'three';
 
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
+
 const scene = new THREE.Scene();
 
 // There are multiple camera options https://threejs.org/docs/
@@ -34,7 +36,46 @@ const dodecahedron = new THREE.Mesh(geometry, material) ;
 scene.add(dodecahedron);
 
 // Light source which is brighter than my future
-const pointLight =
+const pointLight = new THREE.PointLight(0xffffff);
+// move the light off center
+pointLight.position.set(10, 10, 10);
+
+// ambient light are like floodlights and they light up the whole room
+const ambientLight = new THREE.AmbientLight(0xffffff);
+scene.add(ambientLight, pointLight);
+
+// shows you where the light source is
+const lightHelper = new THREE.PointLightHelper(pointLight);
+const gridHelper = new THREE.GridHelper(200, 50);
+scene.add(gridHelper, lightHelper);
+
+// Instantiate a Orbit Control object to control our camera
+const controls = new OrbitControls(camera, renderer.domElement);
+
+
+const star_geometry = new THREE.SphereGeometry(0.25, 24, 24);
+const star_material = new THREE.MeshStandardMaterial( {color: 0xffffff});
+// function for creating stars randomly in the scene
+function addStar() {
+  const star = new THREE.Mesh(star_geometry, star_material);
+  const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
+  star.position.set(x, y, z);
+  scene.add(star);
+}
+
+Array(225).fill().forEach(addStar);
+
+// loading in textures
+// const spaceTexture = new THREE.TextureLoader().load('img/space.jpg');
+// scene.background = spaceTexture;
+
+// const ryanTexture = new THREE.TextureLoader().load('img/profile_pic.jpg');
+// const ryan = new THREE.Mesh(
+//   new THREE.BoxGeometry(10, 10, 10),
+//   new THREE.MeshBasicMaterial( {map: ryanTexture})
+// );
+// ryan.position.set(-10, -10, -10);
+// scene.add(ryan);
 
 // "Game Loop" to run constantly
 function animate() {
@@ -44,6 +85,8 @@ function animate() {
   dodecahedron.rotation.x += 0.01;
   dodecahedron.rotation.y += 0.005;
   dodecahedron.rotation.z += 0.01;
+
+  controls.update();
 
   renderer.render(scene, camera);
 }
